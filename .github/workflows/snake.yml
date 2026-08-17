@@ -1,0 +1,36 @@
+name: Generate Snake
+
+on:
+  # 每天自动更新一次 / Run daily
+  schedule:
+    - cron: "7 16 * * *"
+  # 允许手动触发 / Allow manual trigger
+  workflow_dispatch:
+  # 推送到 main 时也更新 / Also run on push
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Generate snake animation
+        uses: Platane/snk@v3
+        with:
+          github_user_name: Huanuyn1
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+
+      - name: Push snake to output branch
+        uses: crazy-max/ghaction-github-pages@v3.1.0
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
